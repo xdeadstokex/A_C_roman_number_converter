@@ -20,6 +20,29 @@ text.cap = cap;
 text.size = 0;
 return text;
 }
+
+
+
+
+void texts_empty(texts* text){
+memset(text->data, 0x00, text->cap);
+text->size = 0;
+}
+
+
+void texts_reset(texts* text){
+free(text->data);
+text->data = NULL;  // Prevent double-free accidents
+text->size = 0;
+text->cap = 0;
+}
+
+
+void texts_free(texts* text){
+free(text->data);
+free(text);
+}
+
 //#############################################################################
 void texts_append(texts* text, const char* input_text, int size){
 if(text->size + size > text->cap){
@@ -36,7 +59,18 @@ text->size += size;
 
 
 
+void texts_append_char(texts* text, const char input_char){
+if(text->size + 1 > text->cap){
+text->cap = text->size * 2 + 1 + 1;
+char* temp_data = malloc(text->cap);
+memcpy(temp_data, text->data, text->size);
+free(text->data);
+text->data = temp_data;
+}
 
+memcpy(text->data + text->size, &input_char, 1);
+text->size += 1;
+}
 
 
 //#############################################################################
@@ -99,5 +133,11 @@ if(text->data[a] != tagret_char){ break; }
 }
 return a;
 }
+
+
+int get_int_from_string(const char* string){
+return atoi(string);
+}
+
 
 

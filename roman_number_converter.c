@@ -141,7 +141,10 @@ if(r_number->size >= MAX_ROMAN_NUMBER_SIZE){ return -1; } // roman num are not t
 // check for invalid symbol, what is not "I V X L C D M"
 static texts text_white_list;
 static int init_text_white_list = 0;
-if(!init_text_white_list){ texts_get(&text_white_list, "IVXLCDM"); }
+if(!init_text_white_list){
+init_text_white_list = 1;
+texts_get(&text_white_list, "IVXLCDM");
+}
 
 if(!check_texts_present_only_this_char_bulk(r_number, &text_white_list)){ return -1; }
 
@@ -225,7 +228,10 @@ int bl_count_triplet = check_blacklists_count(&black_list, value_cur, TYPE_TRIPL
 //printf("n %d s %d t%d\n", bl_count_normal, bl_count_special, bl_count_triplet); // debug
 
 if(bl_count_triplet > 1){ value_final = -1; goto end; } // only 1 triplet
-if(bl_count_special > 1){ value_final = -1; goto end; } // only 1 special
+if(bl_count_special > 1){
+if(value_cur == 1 || value_cur == 5 || value_cur == 50 || value_cur == 500 || value_cur == 1000){ value_final = -1; goto end; } // I M and midway have one special
+else if(bl_count_special > 2){ value_final = -1; goto end; } // other special <= 2
+}
 if(bl_count_normal > 2){ value_final = -1; goto end; } // only 0-2 normal
 if(bl_count_triplet == 1 && bl_count_normal > 0){ value_final = -1; goto end; } // cant have both triplet and normal
 if(bl_count_special_before == 1 && bl_count_normal - bl_count_normal_before != 0){ value_final = -1; goto end; } // cant have normal after special
@@ -265,8 +271,6 @@ a += loop_skip;
 return return_value;
 }
 
-
-
 #undef TYPE_NORMAL
 #undef TYPE_SPECIAL
 #undef TYPE_TRIPLET
@@ -274,6 +278,32 @@ return return_value;
 
 
 /////////////////////////////////////////////////
+// helper func
+void append_roman_rank(int rank, const char* bottom_value, const char* mid_value, const char* top_value, texts* text){
+if(rank >= 5){
+if(rank >= 9){
+texts_append(text, bottom_value, 1);
+texts_append(text, top_value, 1);
+}
+else{
+texts_append(text, mid_value, 1);
+for(int a = 0; a < rank - 5; ++a){ texts_append(text, bottom_value, 1); }
+}
+}
+
+else{
+if(rank >= 4){
+texts_append(text, bottom_value, 1);
+texts_append(text, mid_value, 1);
+}
+
+else{
+for(int a = 0; a < rank; ++a){ texts_append(text, bottom_value, 1); }
+}
+}
+}
+
+
 texts get_roman_number_from_decimal(int number){
 // init text space
 texts text_return;
@@ -289,62 +319,11 @@ int thousand_rank = (int)(number / 1000) * 1000;
 thousand_rank = thousand_rank / 1000;
 for(int a = 0; a < thousand_rank; ++a){ texts_append(&text_return, "M", 1); }
 
-hundred_rank = hundred_rank / 100;
-if(hundred_rank >= 5){
-if(hundred_rank >= 9){
-texts_append(&text_return, "CM", 2);
-}
-else{
-texts_append(&text_return, "D", 1);
-for(int a = 0; a < hundred_rank - 5; ++a){ texts_append(&text_return, "C", 1); }
-}
-}
+append_roman_rank(hundred_rank / 100, "C", "D", "M", &text_return);
+append_roman_rank(decimal_rank / 10, "X", "L", "C", &text_return);
+append_roman_rank(unit_rank, "I", "V", "X", &text_return);
 
-else{
-if(hundred_rank >= 4){ texts_append(&text_return, "CD", 2); }
-else{
-for(int a = 0; a < hundred_rank; ++a){ texts_append(&text_return, "C", 1); }
-}
-}
-
-decimal_rank = decimal_rank / 10;
-if(decimal_rank >= 5){
-if(decimal_rank >= 9){
-texts_append(&text_return, "XC", 2);
-}
-else{
-texts_append(&text_return, "L", 1);
-for(int a = 0; a < decimal_rank - 5; ++a){ texts_append(&text_return, "X", 1); }
-}
-}
-
-else{
-if(decimal_rank >= 4){ texts_append(&text_return, "XL", 2); }
-else{
-for(int a = 0; a < decimal_rank; ++a){ texts_append(&text_return, "X", 1); }
-}
-}
-
-if(unit_rank >= 5){
-if(unit_rank >= 9){
-texts_append(&text_return, "IX", 2);
-}
-else{
-texts_append(&text_return, "V", 1);
-for(int a = 0; a < unit_rank - 5; ++a){ texts_append(&text_return, "I", 1); }
-}
-}
-
-else{
-if(unit_rank >= 4){ texts_append(&text_return, "IV", 2); }
-else{
-for(int a = 0; a < unit_rank; ++a){ texts_append(&text_return, "I", 1); }
-}
-}
-
-
-
-printf("num: %d %d %d %d ", thousand_rank, hundred_rank, decimal_rank, unit_rank);
+//printf("num: %d %d %d %d ", thousand_rank, hundred_rank, decimal_rank, unit_rank);
 
 return text_return;
 }
