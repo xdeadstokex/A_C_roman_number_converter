@@ -22,14 +22,12 @@ printf("##################################################################\n");
 for(;;){
 
 printf("Type roman number: ");
-scanf("%32s", user_input);
-//fgets(user_input, 32, stdin);
+scanf("%32s", user_input); // input from terminal
 
 if(user_input[0] == 'q') break;
 
-
 get_texts(&roman_text, user_input);
-//printf("repeat %d\n", get_texts_char_repeat_count(&roman_text, 'I'));
+
 printf("confirmed roman number: ");
 print_texts(&roman_text);
 printf(" size %d \n", roman_text.size);
@@ -209,12 +207,6 @@ if(!check_texts_present_only_this_char_bulk(r_number, &text_white_list)){ return
 
 black_lists black_list;
 memset(&black_list, 0x00, sizeof(black_lists)); // zero'ed every value in blacklist
-//add_blacklists_count(&black_list, 10, 100, TYPE_SPECIAL); // occured 1 time
-//printf("bll %d\n", black_list.value_X_special_count);
-//printf("bll %d\n", check_blacklists_count(&black_list, 10, TYPE_SPECIAL));
-
-int value_black_list[TOTAL_VALUE]; // to prevent getting invalid values, 7 is from I to M total amount of value
-for(int a = 0; a < TOTAL_VALUE; ++a){ value_black_list[a] = 0; }
 
 int value_list[MAX_ROMAN_NUMBER_SIZE];
 for(int a = 0; a < r_number->size; ++a){
