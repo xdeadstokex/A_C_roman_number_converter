@@ -1,4 +1,5 @@
 #include "roman_number_converter.h"
+#include <stdio.h>
 #include <string.h> // memset
 
 #define MAX_ROMAN_NUMBER_SIZE 32
@@ -140,7 +141,7 @@ if(r_number->size >= MAX_ROMAN_NUMBER_SIZE){ return -1; } // roman num are not t
 // check for invalid symbol, what is not "I V X L C D M"
 static texts text_white_list;
 static int init_text_white_list = 0;
-if(!init_text_white_list){ get_texts(&text_white_list, "IVXLCDM"); }
+if(!init_text_white_list){ texts_get(&text_white_list, "IVXLCDM"); }
 
 if(!check_texts_present_only_this_char_bulk(r_number, &text_white_list)){ return -1; }
 
@@ -237,19 +238,13 @@ if(bl_count_special == 1 && bl_count_triplet == 1){ value_final = -1; goto end; 
 }
 
 //printf("l_v %d c_v %d\n", last_value, value_final);
-if(last_value < value_final && last_value != 0){ value_final = -1; } // prevent larger numberal to be BEHIND like C-M...
+if(last_value < value_final && last_value != 0){ value_final = -1; goto end; } // prevent larger numberal to be BEHIND like C-M...
 
 if(last_value > value_final){
 // midway cant coexist with same rank (10, 100, 1000) specialists, like CM-D 900 + 500
-if(value_final == 5){
-if(last_value <= 10){ value_final = -1; }
-}
-if(value_final == 50){
-if(last_value <= 100){ value_final = -1; }
-}
-if(value_final == 500){
-if(last_value <= 1000){ value_final = -1; }
-}
+if(value_final == 5 && last_value < 10){ value_final = -1; goto end; }
+if(value_final == 50 && last_value < 100){ value_final = -1; goto end; }
+if(value_final == 500 && last_value < 1000){ value_final = -1; goto end; }
 }
 
 
@@ -279,10 +274,77 @@ return return_value;
 
 
 /////////////////////////////////////////////////
-void get_roman_number_from_decimal(texts* r_number, int number){
+texts get_roman_number_from_decimal(int number){
 // init text space
-
+texts text_return;
+text_return = texts_create(MAX_ROMAN_NUMBER_SIZE);
 // remember that roman num dont get over 3999, so make sure to check the final value
-if(number <= 0 || number > 3999){ return; }
+if(number <= 0 || number > 3999){ return text_return; }
 
+int unit_rank = number - (int)(number / 10) * 10;
+int decimal_rank = number - unit_rank - (int)(number / 100) * 100;
+int hundred_rank = number - decimal_rank - unit_rank - (int)(number / 1000) * 1000;
+int thousand_rank = (int)(number / 1000) * 1000;
+
+thousand_rank = thousand_rank / 1000;
+for(int a = 0; a < thousand_rank; ++a){ texts_append(&text_return, "M", 1); }
+
+hundred_rank = hundred_rank / 100;
+if(hundred_rank >= 5){
+if(hundred_rank >= 9){
+texts_append(&text_return, "CM", 2);
+}
+else{
+texts_append(&text_return, "D", 1);
+for(int a = 0; a < hundred_rank - 5; ++a){ texts_append(&text_return, "C", 1); }
+}
+}
+
+else{
+if(hundred_rank >= 4){ texts_append(&text_return, "CD", 2); }
+else{
+for(int a = 0; a < hundred_rank; ++a){ texts_append(&text_return, "C", 1); }
+}
+}
+
+decimal_rank = decimal_rank / 10;
+if(decimal_rank >= 5){
+if(decimal_rank >= 9){
+texts_append(&text_return, "XC", 2);
+}
+else{
+texts_append(&text_return, "L", 1);
+for(int a = 0; a < decimal_rank - 5; ++a){ texts_append(&text_return, "X", 1); }
+}
+}
+
+else{
+if(decimal_rank >= 4){ texts_append(&text_return, "XL", 2); }
+else{
+for(int a = 0; a < decimal_rank; ++a){ texts_append(&text_return, "X", 1); }
+}
+}
+
+if(unit_rank >= 5){
+if(unit_rank >= 9){
+texts_append(&text_return, "IX", 2);
+}
+else{
+texts_append(&text_return, "V", 1);
+for(int a = 0; a < unit_rank - 5; ++a){ texts_append(&text_return, "I", 1); }
+}
+}
+
+else{
+if(unit_rank >= 4){ texts_append(&text_return, "IV", 2); }
+else{
+for(int a = 0; a < unit_rank; ++a){ texts_append(&text_return, "I", 1); }
+}
+}
+
+
+
+printf("num: %d %d %d %d ", thousand_rank, hundred_rank, decimal_rank, unit_rank);
+
+return text_return;
 }

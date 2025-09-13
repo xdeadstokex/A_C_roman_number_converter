@@ -3,6 +3,6 @@
 #include "texts.h"
 
 int get_decimal_from_roman_number(texts* r_number);
-void get_roman_number_from_decimal(texts* r_number, int number);
+texts get_roman_number_from_decimal(int number);
 #endif // ROMAN_NUMBER_CONVERTER_H
 

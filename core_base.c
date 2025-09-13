@@ -5,7 +5,7 @@
 
 /////////////////////////////////////////////////
 void run(){
-
+/*
 char user_input[32];
 texts roman_text;
 
@@ -18,7 +18,7 @@ scanf("%32s", user_input); // input from terminal
 
 if(user_input[0] == 'q') break;
 
-get_texts(&roman_text, user_input);
+texts_get(&roman_text, user_input);
 
 printf("confirmed roman number: ");
 print_texts(&roman_text);
@@ -33,7 +33,14 @@ printf("\n");
 }
 printf("##################################################################\n");
 }
-
+*/
+for(int a = 0; a < 4000; ++a){
+texts roman_text = get_roman_number_from_decimal(a);
+printf("roman text: ");
+print_texts(&roman_text);
+printf("       ");
+if((a + 1) % 4 == 0){ printf("\n"); }
+}
 return;
 }
 /////////////////////////////////////////////////

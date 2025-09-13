@@ -4,13 +4,42 @@
 #include <stdlib.h> // malloc
 #include <string.h> //memcpy
 
-void get_texts(texts* text, const char* input_text){
+//#############################################################################
+void texts_get(texts* text, const char* input_text){
 text->size = 0;
 for(int a = 0; input_text[a] != 0; ++a){ ++text->size; }
-text->data = malloc(text->size);
+text->cap = text->size * 2 + 1;
+text->data = malloc(text->cap);
 memcpy(text->data, input_text, text->size);
 }
 
+texts texts_create(int cap){
+texts text;
+text.data = malloc(cap);
+text.cap = cap;
+text.size = 0;
+return text;
+}
+//#############################################################################
+void texts_append(texts* text, const char* input_text, int size){
+if(text->size + size > text->cap){
+text->cap = text->size * 2 + size + 1;
+char* temp_data = malloc(text->cap);
+memcpy(temp_data, text->data, text->size);
+free(text->data);
+text->data = temp_data;
+}
+
+memcpy(text->data + text->size, input_text, size);
+text->size += size;
+}
+
+
+
+
+
+
+//#############################################################################
 
 void print_texts(texts* text){
 printf("%.*s", text->size, text->data);
