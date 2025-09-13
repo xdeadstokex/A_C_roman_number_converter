@@ -6,11 +6,9 @@
 /////////////////////////////////////////////////
 #define MAX_ROMAN_NUMBER_SIZE 32
 
-
 // custom func prototype
 int get_decimal_from_roman_number(texts* r_number);
 void get_roman_number_from_decimal(texts* r_number, int number);
-void print_roman_number(texts* r_number);
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
@@ -50,6 +48,7 @@ return;
 }
 /////////////////////////////////////////////////
 
+
 /////////////////////////////////////////////////
 // Entry point - completely self-contained
 int main(int argc, char** argv){
@@ -59,14 +58,11 @@ return 0;
 }
 /////////////////////////////////////////////////
 
+
 /////////////////////////////////////////////////
 ///////////CUSTOM_FUNC_IMPLEMENT/////////////////
 /////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////
 #define TOTAL_VALUE 7
-
 
 #define TYPE_NORMAL 0
 #define TYPE_SPECIAL 1
@@ -103,8 +99,8 @@ int value_M_triplet_count; // same
 };
 typedef struct black_lists black_lists;
 
+/////////////////////////////////////////////////
 // helper func
-
 void add_blacklists_count(black_lists* black_list, int value, int black_list_value, int type){
 if(value == 1){
 if(type == TYPE_NORMAL){ black_list->value_I_count += black_list_value; }
@@ -148,9 +144,9 @@ else if(type == TYPE_SPECIAL){ black_list->value_M_special_count += black_list_v
 else if(type == TYPE_TRIPLET){ black_list->value_M_triplet_count += black_list_value; }
 }
 }
+/////////////////////////////////////////////////
 
-
-
+/////////////////////////////////////////////////
 int check_blacklists_count(black_lists* black_list, int value, int type){
 if(value == 1){
 if(type == TYPE_NORMAL){ return black_list->value_I_count; }
@@ -196,12 +192,10 @@ else if(type == TYPE_TRIPLET){ return black_list->value_M_triplet_count; }
 
 return 0; // fallback for invalid value/type
 }
+/////////////////////////////////////////////////
 
-
-
+/////////////////////////////////////////////////
 int get_decimal_from_roman_number(texts* r_number){
-// remember that roman num dont get over 3999, so make sure to check the final value
-
 if(r_number->size >= MAX_ROMAN_NUMBER_SIZE){ return -1; } // roman num are not that long
 
 // check for invalid symbol, what is not "I V X L C D M"
@@ -323,8 +317,6 @@ if(last_value <= 100){ value_final = -1; }
 if(value_final == 500){
 if(last_value <= 1000){ value_final = -1; }
 }
-
-
 }
 
 
@@ -355,14 +347,7 @@ return return_value;
 
 /////////////////////////////////////////////////
 void get_roman_number_from_decimal(texts* r_number, int number){
-
-}
-/////////////////////////////////////////////////
-
-/////////////////////////////////////////////////
-void print_roman_number(texts* r_number){
-//if(r_number->current_size > 0){ printf("roman number: %s\n", r_number->text); }
-//else{ printf("invalid roman number\n"); }
+// remember that roman num dont get over 3999, so make sure to check the final value
 }
 /////////////////////////////////////////////////
 
