@@ -7,8 +7,8 @@
 void run(){
 
 int mode = 0;
-char user_input[32];
-texts roman_text;
+char user_input[33]; // +1 for null terminator
+text_1024 roman_text;
 
 printf("Type q to quit !\n");
 printf("Type m to change mode !\n");
@@ -23,17 +23,17 @@ scanf("%32s", user_input); // input from terminal
 if(user_input[0] == 'q'){ break; }
 if(user_input[0] == 'm'){ mode = 1; continue; }
 
-texts_get(&roman_text, user_input);
+text_write(&roman_text, user_input);
 
 printf("confirmed roman number: ");
-print_texts(&roman_text);
+text_print(&roman_text, roman_text.size);
 printf(" size %d \n", roman_text.size);
 
 int final_dec_value = get_decimal_from_roman_number(&roman_text);
 if(final_dec_value > 0){ printf("decimal value: %d\n", final_dec_value); }
 else{
 printf("INVALID ROMAN NUMBER: ");
-print_texts(&roman_text);
+text_print(&roman_text, roman_text.size);
 printf("\n");
 }
 }
@@ -45,17 +45,17 @@ if(user_input[0] == 'q'){ break; }
 if(user_input[0] == 'm'){ mode = 0; continue; }
 int num = get_int_from_string(user_input);
 
-texts roman_text = get_roman_number_from_decimal(num);
+text_1024 roman_text = get_roman_number_from_decimal(num);
 if(roman_text.size > 0){
 printf("Roman text: ");
-print_texts(&roman_text);
+text_print(&roman_text, roman_text.size);
 printf("\n");
 }
 else{
 printf("ONLY INPUT NUMBER FROM 1 -> 3999 !\n");
 }
 
-texts_reset(&roman_text);
+roman_text.size = 0;
 }
 
 
